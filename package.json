@@ -1,6 +1,6 @@
 {
   "name": "@jbendz/scg-cli",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Supply Chain Guard CLI - Secure front door for npm: per-session install guard, mandatory preflight, phantom detection, governance checks",
   "main": "src/index.js",
   "bin": {

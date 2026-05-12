@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "approvedBuilds": {},
+  "deniedBuilds": {},
+  "settings": {
+    "cooldownDays": 3,
+    "failOn": "HIGH"
+  }
+}

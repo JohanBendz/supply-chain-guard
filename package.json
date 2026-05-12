@@ -1,0 +1,29 @@
+{
+  "name": "supply-chain-guard",
+  "version": "0.8.0",
+  "description": "Secure front door for npm: per-session install guard, mandatory preflight, phantom detection, governance checks",
+  "main": "src/index.js",
+  "bin": {
+    "scg": "./bin/scg.js"
+  },
+  "scripts": {
+    "test": "node test/run.js && node test/check.test.js && node test/policy.test.js && node test/npm.test.js && node test/lockfile.test.js && node test/install-inspector.test.js && node test/rebuild.test.js && node test/registry-exactversion.test.js && node test/delta-phantom.test.js && node test/init.test.js && node test/tarbomb.test.js && node test/doctor.test.js && node test/phantom-check.test.js && node test/update.test.js && node test/registry-cache.test.js && node test/fixes.test.js && node test/fixes-round2.test.js && node test/fixes-round3.test.js && node test/js-lexer.test.js && node test/fixes-round4.test.js && node test/fixes-round5.test.js && node test/fixes-080.test.js"
+  },
+  "keywords": [
+    "security",
+    "supply-chain",
+    "npm",
+    "audit",
+    "postinstall",
+    "phantom-dependency",
+    "provenance",
+    "policy"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "semver": "^7.7.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

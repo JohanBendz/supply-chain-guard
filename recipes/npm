@@ -1,0 +1,73 @@
+#!/usr/bin/env sh
+# ─────────────────────────────────────────────────────────────────────────────
+# ./npm shim — supply-chain-guard muscle-memory layer
+#
+# Copy this file to the root of your repo as `./npm` and `chmod +x ./npm`.
+# After that, `./npm install` (or `./npm ci`, `./npm add foo`, etc.) routes
+# the dependency-changing commands through `scg`, while everything else
+# (`./npm test`, `./npm run build`, ...) passes through to real npm.
+#
+# THIS IS NOT A SECURITY BOUNDARY.
+#
+# The actual protection against raw `npm install` bypass is the .scg-lock
+# preinstall guard injected by `scg init`. That guard runs regardless of
+# whether you used the shim — a developer who runs `npm install` directly
+# (without `./`) still gets blocked, just slightly later in the install
+# process. The shim is purely a convenience layer to make the right thing
+# also be the easy thing.
+#
+# If you need to invoke the real npm without going through scg (escape
+# hatch), use the absolute path: `$(command -v npm) install`.
+# ─────────────────────────────────────────────────────────────────────────────
+
+case "$1" in
+  install|i|ci|add|update|uninstall|remove|rm)
+    exec scg "$@"
+    ;;
+  rebuild)
+    # `npm rebuild` would bypass the policy hash-binding check that
+    # `scg rebuild-approved` performs. Block it explicitly with a
+    # pointer to the right command.
+    echo "✖ ./npm rebuild is blocked by the SCG shim."
+    echo "  Use: scg rebuild-approved [<pkg>]"
+    echo "  This routes through the policy hash-binding check that"
+    echo "  protects against post-approval script tampering."
+    exit 1
+    ;;
+  exec|x)
+    # `npm exec` / `npm x` is npm's npx-equivalent. It downloads and
+    # executes packages directly, bypassing scg entirely. Same risk
+    # surface as raw npx.
+    echo "✖ ./npm exec is blocked by the SCG shim."
+    echo "  npm exec / npx fetches and runs code without going through"
+    echo "  npm install, so scg cannot intercept it. Install the tool"
+    echo "  as a dev dependency and invoke it via package.json scripts"
+    echo "  instead (those use the local node_modules/.bin path)."
+    exit 1
+    ;;
+  *)
+    # Pass through to real npm. We use `command -p` with PATH search to
+    # find the real binary, but exclude the current directory from the
+    # search to avoid infinite recursion if `.` is in PATH.
+    real_npm=$(PATH=$(getconf PATH 2>/dev/null || echo "/usr/local/bin:/usr/bin:/bin") command -v npm)
+    if [ -z "$real_npm" ]; then
+      # Fallback: search current PATH but skip ourselves
+      shim_dir=$(cd "$(dirname "$0")" && pwd)
+      old_ifs=$IFS
+      IFS=:
+      for dir in $PATH; do
+        if [ "$dir" != "$shim_dir" ] && [ "$dir" != "." ] && [ -x "$dir/npm" ]; then
+          real_npm="$dir/npm"
+          break
+        fi
+      done
+      IFS=$old_ifs
+    fi
+    if [ -z "$real_npm" ]; then
+      echo "✖ ./npm shim could not locate the real npm binary."
+      echo "  Install Node.js or check your PATH."
+      exit 127
+    fi
+    exec "$real_npm" "$@"
+    ;;
+esac

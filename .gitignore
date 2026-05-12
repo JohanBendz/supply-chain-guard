@@ -1,0 +1,4 @@
+
+# supply-chain-guard
+.scg-snapshot-*.json
+.scg-lock

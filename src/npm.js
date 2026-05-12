@@ -11,7 +11,7 @@ const { spawnSync } = require('child_process');
 const { generateSessionToken } = require('./lock-token');
 
 // npm binary name: 'npm.cmd' on Windows, 'npm' elsewhere
-const NPM_BIN = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const NPM_BIN = process.platform === 'win32' ? 'npm' : 'npm';
 
 // Environment variables that an attacker-controlled package, having run as
 // part of normal application code BEFORE scg rebuild-approved kicks off,
@@ -109,7 +109,7 @@ function runSafe(args, opts = {}) {
     env: Object.assign({}, process.env, env,
       _sessionToken ? { SCG_ACTIVE: _sessionToken } : {}),
     stdio: inheritIO ? 'inherit' : 'pipe',
-    shell: false,
+    shell: process.platform === 'win32',
   };
 
   const result = spawnSync(NPM_BIN, finalArgs, spawnOpts);
@@ -155,7 +155,7 @@ function runRaw(args, opts = {}) {
     cwd,
     env: Object.assign({}, baseEnv, env),
     stdio: 'inherit',
-    shell: false,
+    shell: process.platform === 'win32',
   });
 
   if (result.error) throw new Error(`npm spawn error: ${result.error.message}`);

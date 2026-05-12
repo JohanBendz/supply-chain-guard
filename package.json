@@ -1,13 +1,14 @@
 {
   "name": "@jbendz/scg-cli",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Supply Chain Guard CLI - Secure front door for npm: per-session install guard, mandatory preflight, phantom detection, governance checks",
   "main": "src/index.js",
   "bin": {
     "scg": "bin/scg.js"
   },
   "scripts": {
-    "test": "node test/run.js && node test/check.test.js && node test/policy.test.js && node test/npm.test.js && node test/lockfile.test.js && node test/install-inspector.test.js && node test/rebuild.test.js && node test/registry-exactversion.test.js && node test/delta-phantom.test.js && node test/init.test.js && node test/tarbomb.test.js && node test/doctor.test.js && node test/phantom-check.test.js && node test/update.test.js && node test/registry-cache.test.js && node test/fixes.test.js && node test/fixes-round2.test.js && node test/fixes-round3.test.js && node test/js-lexer.test.js && node test/fixes-round4.test.js && node test/fixes-round5.test.js && node test/fixes-080.test.js"
+    "test": "node test/run.js && node test/check.test.js && node test/policy.test.js && node test/npm.test.js && node test/lockfile.test.js && node test/install-inspector.test.js && node test/rebuild.test.js && node test/registry-exactversion.test.js && node test/delta-phantom.test.js && node test/init.test.js && node test/tarbomb.test.js && node test/doctor.test.js && node test/phantom-check.test.js && node test/update.test.js && node test/registry-cache.test.js && node test/fixes.test.js && node test/fixes-round2.test.js && node test/fixes-round3.test.js && node test/js-lexer.test.js && node test/fixes-round4.test.js && node test/fixes-round5.test.js && node test/fixes-080.test.js",
+    "preinstall": "node -e \"var d=process.cwd();var lf=require('path').join(d,'.scg-lock');var pf=require('path').join(d,'.scg-policy.json');var fs=require('fs');var t;if(fs.existsSync(lf)){  try{t=JSON.parse(fs.readFileSync(lf,'utf8')).token;}catch(e){t=null;}}else{  var init=fs.existsSync(pf);  if(init){    var r='\\x1b[0m',b='\\x1b[31m\\x1b[1m',c='\\x1b[36m',d2='\\x1b[2m';    console.error('');    console.error(b+'Raw npm install was blocked by Supply Chain Guard.'+r);    console.error('');    console.error('  This project is protected against malicious install scripts.');    console.error('  Use the safe wrapper instead:');    console.error('');    console.error('      '+c+'scg install'+r+'        for npm install');    console.error('      '+c+'scg add <pkg>'+r+'      for npm install <pkg>');    console.error('      '+c+'scg ci'+r+'             for npm ci');    console.error('');    console.error('  '+d2+'Why: scg forces --ignore-scripts and runs preflight checks'+r);    console.error('  '+d2+'against the npm registry before any code is downloaded.'+r);    console.error('');    process.exit(1);  }  console.warn('\\x1b[33mSupply Chain Guard is not initialized in this project. Run: scg init\\x1b[0m');  process.exit(0);}if(process.env.SCG_ACTIVE!==t){var r='\\x1b[0m',b='\\x1b[31m\\x1b[1m',c='\\x1b[36m',d2='\\x1b[2m';console.error('');console.error(b+'Raw npm install was blocked by Supply Chain Guard.'+r);console.error('');console.error('  Use the safe wrapper instead:');console.error('');console.error('      '+c+'scg install'+r+'        for npm install');console.error('      '+c+'scg add <pkg>'+r+'      for npm install <pkg>');console.error('      '+c+'scg ci'+r+'             for npm ci');console.error('');console.error('  '+d2+'Why: scg forces --ignore-scripts and runs preflight checks'+r);console.error('  '+d2+'against the npm registry before any code is downloaded.'+r);console.error('');process.exit(1);}\""
   },
   "keywords": [
     "security",
@@ -21,7 +22,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "semver": "^7.7.2"
+    "semver": "^7.8.0"
   },
   "engines": {
     "node": ">=22"

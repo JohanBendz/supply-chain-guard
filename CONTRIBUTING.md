@@ -1,4 +1,4 @@
-# Contributing to supply-chain-guard
+# Contributing to Supply Chain Guard - @jbendz/scg-cli
 
 Thanks for your interest. A few notes to make contribution smooth.
 
